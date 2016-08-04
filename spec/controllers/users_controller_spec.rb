@@ -24,11 +24,11 @@ RSpec.describe UsersController, type: :controller do
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.attributes_for(:user)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    valid_attributes.merge(name: '')
   }
 
   # This should return the minimal set of values that should be in the session
@@ -68,7 +68,7 @@ RSpec.describe UsersController, type: :controller do
 
       it "redirects to the created user" do
         post :create, params: {user: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(User.last)
+        expect(response).to have_http_status(:created)
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe UsersController, type: :controller do
 
       it "re-renders the 'new' template" do
         post :create, params: {user: invalid_attributes}, session: valid_session
-        expect(response).to render_template("new")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -107,7 +107,7 @@ RSpec.describe UsersController, type: :controller do
       it "redirects to the user" do
         user = User.create! valid_attributes
         put :update, params: {id: user.to_param, user: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(user)
+        expect(response).to have_http_status(:success)
       end
     end
 
@@ -121,7 +121,7 @@ RSpec.describe UsersController, type: :controller do
       it "re-renders the 'edit' template" do
         user = User.create! valid_attributes
         put :update, params: {id: user.to_param, user: invalid_attributes}, session: valid_session
-        expect(response).to render_template("edit")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -137,7 +137,7 @@ RSpec.describe UsersController, type: :controller do
     it "redirects to the users list" do
       user = User.create! valid_attributes
       delete :destroy, params: {id: user.to_param}, session: valid_session
-      expect(response).to redirect_to(users_url)
+      expect(response).to have_http_status(:no_content)
     end
   end
 

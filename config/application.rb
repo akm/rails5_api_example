@@ -26,5 +26,18 @@ module Rails5ApiExample
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.time_zone = 'Tokyo'
+    config.active_record.default_timezone = :local
+
+    config.i18n.default_locale = :ja
+
+    config.generators do |g|
+      # g.orm             :mongoid
+      g.test_framework  :rspec
+      g.factory_girl dir: 'spec/factories'
+      # g.template_engine :haml
+    end
+
   end
 end

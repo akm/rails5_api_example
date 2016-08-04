@@ -20,15 +20,17 @@ require 'rails_helper'
 
 RSpec.describe PostsController, type: :controller do
 
+  let(:user){ FactoryGirl.create(:user) }
+  let(:post1){ FactoryGirl.create(:post, user: user) }
   # This should return the minimal set of attributes required to create a valid
   # Post. As you add validations to Post, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.attributes_for(:post).merge(user_id: user.id)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    valid_attributes.merge(title: '')
   }
 
   # This should return the minimal set of values that should be in the session
@@ -38,17 +40,17 @@ RSpec.describe PostsController, type: :controller do
 
   describe "GET #index" do
     it "assigns all posts as @posts" do
-      post = Post.create! valid_attributes
+      post1 # to load
       get :index, params: {}, session: valid_session
-      expect(assigns(:posts)).to eq([post])
+      expect(assigns(:posts)).to eq([post1])
     end
   end
 
   describe "GET #show" do
     it "assigns the requested post as @post" do
-      post = Post.create! valid_attributes
-      get :show, params: {id: post.to_param}, session: valid_session
-      expect(assigns(:post)).to eq(post)
+      post1 # to load
+      get :show, params: {id: post1.to_param}, session: valid_session
+      expect(assigns(:post)).to eq(post1)
     end
   end
 
@@ -68,7 +70,7 @@ RSpec.describe PostsController, type: :controller do
 
       it "redirects to the created post" do
         post :create, params: {post: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(Post.last)
+        expect(response).to have_http_status(:created)
       end
     end
 
@@ -80,64 +82,65 @@ RSpec.describe PostsController, type: :controller do
 
       it "re-renders the 'new' template" do
         post :create, params: {post: invalid_attributes}, session: valid_session
-        expect(response).to render_template("new")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe "PUT #update" do
     context "with valid params" do
+      let(:new_title){ "New Title #1" }
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        valid_attributes.merge(title: new_title)
       }
 
       it "updates the requested post" do
-        post = Post.create! valid_attributes
-        put :update, params: {id: post.to_param, post: new_attributes}, session: valid_session
-        post.reload
-        skip("Add assertions for updated state")
+        post1 # to load
+        put :update, params: {id: post1.to_param, post: new_attributes}, session: valid_session
+        post1.reload
+        expect(post1.title).to eq new_title
       end
 
       it "assigns the requested post as @post" do
-        post = Post.create! valid_attributes
-        put :update, params: {id: post.to_param, post: valid_attributes}, session: valid_session
-        expect(assigns(:post)).to eq(post)
+        post1 # to load
+        put :update, params: {id: post1.to_param, post: valid_attributes}, session: valid_session
+        expect(assigns(:post)).to eq(post1)
       end
 
       it "redirects to the post" do
-        post = Post.create! valid_attributes
-        put :update, params: {id: post.to_param, post: valid_attributes}, session: valid_session
-        expect(response).to redirect_to(post)
+        post1 # to load
+        put :update, params: {id: post1.to_param, post: valid_attributes}, session: valid_session
+        expect(response).to have_http_status(:success)
       end
     end
 
     context "with invalid params" do
       it "assigns the post as @post" do
-        post = Post.create! valid_attributes
-        put :update, params: {id: post.to_param, post: invalid_attributes}, session: valid_session
-        expect(assigns(:post)).to eq(post)
+        post1 # to load
+        put :update, params: {id: post1.to_param, post: invalid_attributes}, session: valid_session
+        expect(assigns(:post)).to eq(post1)
       end
 
       it "re-renders the 'edit' template" do
-        post = Post.create! valid_attributes
-        put :update, params: {id: post.to_param, post: invalid_attributes}, session: valid_session
-        expect(response).to render_template("edit")
+        post1 # to load
+        put :update, params: {id: post1.to_param, post: invalid_attributes}, session: valid_session
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe "DELETE #destroy" do
     it "destroys the requested post" do
-      post = Post.create! valid_attributes
+      post1 # to load
       expect {
-        delete :destroy, params: {id: post.to_param}, session: valid_session
+        delete :destroy, params: {id: post1.to_param}, session: valid_session
       }.to change(Post, :count).by(-1)
     end
 
     it "redirects to the posts list" do
-      post = Post.create! valid_attributes
-      delete :destroy, params: {id: post.to_param}, session: valid_session
-      expect(response).to redirect_to(posts_url)
+      post1 # to load
+      delete :destroy, params: {id: post1.to_param}, session: valid_session
+      expect(response).to have_http_status(:no_content)
     end
   end
 

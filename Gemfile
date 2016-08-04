@@ -43,6 +43,7 @@ group :development, :test do
   gem 'annotate'
   gem 'rails_best_practices'
   gem 'bullet'
+  gem 'rails-controller-testing'
 end
 
 group :development do

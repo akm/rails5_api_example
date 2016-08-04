@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160804091046) do
+ActiveRecord::Schema.define(version: 20160804092932) do
+
+  create_table "posts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", comment: "ポスト" do |t|
+    t.integer  "user_id",                  null: false, comment: "ユーザ"
+    t.string   "title",                    null: false, comment: "タイトル"
+    t.text     "content",    limit: 65535,              comment: "内容"
+    t.string   "category",                              comment: "カテゴリ"
+    t.integer  "rating",                                comment: "レート"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.index ["user_id"], name: "index_posts_on_user_id", using: :btree
+  end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", comment: "ユーザ" do |t|
     t.string   "name",                          null: false, comment: "ユーザ名"
@@ -22,4 +33,5 @@ ActiveRecord::Schema.define(version: 20160804091046) do
     t.index ["token"], name: "index_users_on_token", unique: true, using: :btree
   end
 
+  add_foreign_key "posts", "users"
 end

@@ -102,47 +102,47 @@ RSpec.describe UsersController, type: :controller do
         @request.headers["Content-Type"] = 'application/vnd.api+json'
         @request.headers["X-Api-Key"] = user.token
       end
-    context "with valid params" do
-      it "creates a new User" do
-        expect {
+      context "with valid params" do
+        it "creates a new User" do
+          expect {
+            post :create, params: {user: valid_attributes}, session: valid_session
+          }.to change(User, :count).by(1)
+        end
+
+        it "assigns a newly created user as @user" do
           post :create, params: {user: valid_attributes}, session: valid_session
-        }.to change(User, :count).by(1)
+          expect(assigns(:user)).to be_a(User)
+          expect(assigns(:user)).to be_persisted
+        end
+
+        it "redirects to the created user" do
+          post :create, params: {user: valid_attributes}, session: valid_session
+          expect(response).to have_http_status(:created)
+        end
       end
 
-      it "assigns a newly created user as @user" do
-        post :create, params: {user: valid_attributes}, session: valid_session
-        expect(assigns(:user)).to be_a(User)
-        expect(assigns(:user)).to be_persisted
-      end
+      context "with invalid params" do
+        it "Creating new user with invalid type in JSON data should result in error" do
+          post :create, params: { data: { type: 'posts' }}
+          expect(response).to have_http_status(:conflict)
+        end
 
-      it "redirects to the created user" do
-        post :create, params: {user: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:created)
+        it "Creating new user with invalid data should result in error" do
+          post :create, params: {
+                 data: {
+                   type: 'users',
+                   attributes: {
+                     full_name: nil,
+                     password: nil,
+                     password_confirmation: nil }}}
+          expect(response).to have_http_status(:unprocessable_entity)
+          jdata = JSON.parse response.body
+          pointers = jdata['errors'].map{ |e|
+            e['source']['pointer'].split('/').last
+          }.sort
+          expect(pointers).to eq ['full-name','password']
+        end
       end
-    end
-
-    context "with invalid params" do
-      it "Creating new user with invalid type in JSON data should result in error" do
-        post :create, params: { data: { type: 'posts' }}
-        expect(response).to have_http_status(:conflict)
-      end
-
-      it "Creating new user with invalid data should result in error" do
-        post :create, params: {
-               data: {
-                 type: 'users',
-                 attributes: {
-                   full_name: nil,
-                   password: nil,
-                   password_confirmation: nil }}}
-        expect(response).to have_http_status(:unprocessable_entity)
-        jdata = JSON.parse response.body
-        pointers = jdata['errors'].map{ |e|
-          e['source']['pointer'].split('/').last
-        }.sort
-        expect(pointers).to eq ['full-name','password']
-      end
-    end
     end
   end
 

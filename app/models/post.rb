@@ -18,4 +18,5 @@
 
 class Post < ApplicationRecord
   belongs_to :user, required: true
+  self.per_page = 50
 end

@@ -3,8 +3,7 @@ class PostsController < ApplicationController
 
   # GET /posts
   def index
-    @posts = Post.all
-
+    @posts = Post.paginate(:page => params[:page])
     render json: @posts
   end
 

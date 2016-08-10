@@ -34,14 +34,44 @@ RSpec.describe PostsController, type: :controller do
   }
 
   describe "GET #index" do
+    let(:users) do
+      (1..6).map{|i| FactoryGirl.create(:user, name: "user#{i}") }
+    end
+    let(:posts) do
+      users.map.with_index(1) do |user, i|
+        (1..25).map do |n|
+          attrs = {
+            title: "Example title #{i}/#{n}",
+            content: "Example content #{i}/#{n}",
+            user: user,
+            rating: 1 + i + rand(3),
+            category: i == 0 ? 'First' : 'Example'
+          }
+          FactoryGirl.create(:post, attrs)
+        end
+      end.flatten
+    end
+
+    before{ posts }
+
     it "assigns all posts as @posts" do
-      post1 # to load
       get :index, params: {}
-      expect(assigns(:posts)).to eq([post1])
+      expect(response).to have_http_status(:success)
+      expect(response.headers['Content-Type']).to match %r{application/vnd.api\+json}
+      jdata = JSON.parse(response.body)
+      expect(jdata['data'].length).to eq Post.per_page
+      expect(jdata['data'][0]['type']).to eq 'posts'
+    end
+
+    it "Should get valid list of posts" do
+      get :index, params: { page: 2 }
       expect(response).to have_http_status(:success)
       jdata = JSON.parse response.body
-      expect(jdata['data'].length).to eq Post.count
+      expect(jdata['data'].length).to eq Post.per_page
       expect(jdata['data'][0]['type']).to eq 'posts'
+      l = jdata['links']
+      expect(l['first']).to eq l['prev']
+      expect(l['last' ]).to eq l['next']
     end
   end
 

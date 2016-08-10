@@ -168,20 +168,41 @@ RSpec.describe UsersController, type: :controller do
 
       it "updates the requested user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: new_attributes}
+        patch :update, params: {
+                id: user.id,
+                data: {
+                  id: user.id,
+                  type: 'users',
+                  attributes: new_attributes
+                }
+              }
         user.reload
         expect(user.name).to eq new_name
       end
 
       it "assigns the requested user as @user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: valid_attributes}
+        patch :update, params: {
+                id: user.id,
+                data: {
+                  id: user.id,
+                  type: 'users',
+                  attributes: new_attributes
+                }
+              }
         expect(assigns(:user)).to eq(user)
       end
 
       it "redirects to the user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: valid_attributes}
+        patch :update, params: {
+                id: user.id,
+                data: {
+                  id: user.id,
+                  type: 'users',
+                  attributes: new_attributes
+                }
+              }
         expect(response).to have_http_status(:success)
       end
     end
@@ -189,13 +210,27 @@ RSpec.describe UsersController, type: :controller do
     context "with invalid params" do
       it "assigns the user as @user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: invalid_attributes}
+        patch :update, params: {
+                id: user.id,
+                data: {
+                  id: user.id,
+                  type: 'users',
+                  attributes: invalid_attributes
+                }
+              }
         expect(assigns(:user)).to eq(user)
       end
 
       it "re-renders the 'edit' template" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: invalid_attributes}
+        patch :update, params: {
+                id: user.id,
+                data: {
+                  id: user.id,
+                  type: 'users',
+                  attributes: invalid_attributes
+                }
+              }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end

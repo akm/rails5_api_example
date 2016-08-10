@@ -12,7 +12,7 @@ gem 'puma', '~> 3.0'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 gem 'enumerize'
 gem 'pretty_validation', git: 'https://github.com/akm/pretty_validation.git'
@@ -26,6 +26,8 @@ gem 'rack-cors'
 
 # https://www.simplify.ba/articles/2016/06/18/creating-rails5-api-only-application-following-jsonapi-specification/
 gem 'active_model_serializers', '~> 0.10.0'
+
+gem 'will_paginate'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -43,6 +45,7 @@ group :development, :test do
   gem 'annotate'
   gem 'rails_best_practices'
   gem 'bullet'
+  gem 'rails-controller-testing'
 end
 
 group :development do

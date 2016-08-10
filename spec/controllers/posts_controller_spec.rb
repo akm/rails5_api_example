@@ -83,6 +83,15 @@ RSpec.describe PostsController, type: :controller do
       }
       expect(jdata['meta']).to eq expected_meta
     end
+
+    it "Should get properly sorted list" do
+      post = Post.order('rating DESC').first
+      get :index, params: { sort: '-rating' }
+      expect(response).to have_http_status(:success)
+      jdata = JSON.parse response.body
+      expect(jdata['data'].length).to eq Post.per_page
+      expect(jdata['data'][0]['attributes']['title']).to eq post.title
+    end
   end
 
   describe "GET #show" do

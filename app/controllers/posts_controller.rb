@@ -3,8 +3,17 @@ class PostsController < ApplicationController
 
   # GET /posts
   def index
-    @posts = Post.paginate(:page => params[:page])
-    render json: @posts, meta: pagination_meta(@posts).merge(default_meta)
+    @posts = Post.all
+    if params[:sort]
+      f = params[:sort].split(',').first
+      field = f.sub(/\A\-/, '')
+      order = (f =~ /\A\-/) ? 'DESC' : 'ASC'
+      if Post.new.has_attribute?(field)
+        @posts = @posts.order("#{field} #{order}")
+      end
+    end
+    @posts = @posts.paginate(:page => params[:page])
+    render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']
   end
 
   private def pagination_meta(object)

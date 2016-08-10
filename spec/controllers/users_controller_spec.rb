@@ -76,6 +76,32 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "POST #create" do
+    context "with invalid headers" do
+      it "Creating new user without sending correct content-type should result in error" do
+        post :create, params: {}
+        assert_response 406
+      end
+
+      it "Creating new user without sending X-Api-Key should result in error" do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+        post :create, params: {}
+        assert_response 403
+      end
+
+      it "Creating new user with incorrect X-Api-Key should result in error" do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+        @request.headers["X-Api-Key"] = '0000'
+        post :create, params: {}
+        assert_response 403
+      end
+    end
+
+    context "with valid headers" do
+      let(:user){ FactoryGirl.create(:user) }
+      before do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+        @request.headers["X-Api-Key"] = user.token
+      end
     context "with valid params" do
       it "creates a new User" do
         expect {
@@ -96,15 +122,27 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "with invalid params" do
-      it "assigns a newly created but unsaved user as @user" do
-        post :create, params: {user: invalid_attributes}, session: valid_session
-        expect(assigns(:user)).to be_a_new(User)
+      it "Creating new user with invalid type in JSON data should result in error" do
+        post :create, params: { data: { type: 'posts' }}
+        expect(response).to have_http_status(:conflict)
       end
 
-      it "re-renders the 'new' template" do
-        post :create, params: {user: invalid_attributes}, session: valid_session
+      it "Creating new user with invalid data should result in error" do
+        post :create, params: {
+               data: {
+                 type: 'users',
+                 attributes: {
+                   full_name: nil,
+                   password: nil,
+                   password_confirmation: nil }}}
         expect(response).to have_http_status(:unprocessable_entity)
+        jdata = JSON.parse response.body
+        pointers = jdata['errors'].map{ |e|
+          e['source']['pointer'].split('/').last
+        }.sort
+        expect(pointers).to eq ['full-name','password']
       end
+    end
     end
   end
 

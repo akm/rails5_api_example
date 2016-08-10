@@ -80,6 +80,7 @@ RSpec.describe PostsController, type: :controller do
         'prev-page' => 1,
         'total-pages' => 3,
         'total-count' => Post.count, # 150
+        'logged-in' => false,
       }
       expect(jdata['meta']).to eq expected_meta
     end

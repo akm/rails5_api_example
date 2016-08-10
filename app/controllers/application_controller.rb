@@ -34,7 +34,8 @@ class ApplicationController < ActionController::API
   def default_meta
     {
       licence: 'CC-0',
-      authors: ['akm']
+      authors: ['akm'],
+      logged_in: (@current_user ? true : false)
     }
   end
 end

@@ -160,80 +160,80 @@ RSpec.describe UsersController, type: :controller do
         @request.headers["Content-Type"] = 'application/vnd.api+json'
         @request.headers["X-Api-Key"] = user.token
       end
-    context "with valid params" do
-      let(:new_name){ "The User #1" }
-      let(:new_attributes) {
-        valid_attributes.merge(name: new_name)
-      }
+      context "with valid params" do
+        let(:new_name){ "The User #1" }
+        let(:new_attributes) {
+          valid_attributes.merge(name: new_name)
+        }
 
-      it "updates the requested user" do
-        user = User.create! valid_attributes
-        patch :update, params: {
-                id: user.id,
-                data: {
+        it "updates the requested user" do
+          user = User.create! valid_attributes
+          patch :update, params: {
                   id: user.id,
-                  type: 'users',
-                  attributes: new_attributes
+                  data: {
+                    id: user.id,
+                    type: 'users',
+                    attributes: new_attributes
+                  }
                 }
-              }
-        user.reload
-        expect(user.name).to eq new_name
+          user.reload
+          expect(user.name).to eq new_name
+        end
+
+        it "assigns the requested user as @user" do
+          user = User.create! valid_attributes
+          patch :update, params: {
+                  id: user.id,
+                  data: {
+                    id: user.id,
+                    type: 'users',
+                    attributes: new_attributes
+                  }
+                }
+          expect(assigns(:user)).to eq(user)
+        end
+
+        it "redirects to the user" do
+          user = User.create! valid_attributes
+          patch :update, params: {
+                  id: user.id,
+                  data: {
+                    id: user.id,
+                    type: 'users',
+                    attributes: new_attributes
+                  }
+                }
+          expect(response).to have_http_status(:success)
+        end
       end
 
-      it "assigns the requested user as @user" do
-        user = User.create! valid_attributes
-        patch :update, params: {
-                id: user.id,
-                data: {
+      context "with invalid params" do
+        it "assigns the user as @user" do
+          user = User.create! valid_attributes
+          patch :update, params: {
                   id: user.id,
-                  type: 'users',
-                  attributes: new_attributes
+                  data: {
+                    id: user.id,
+                    type: 'users',
+                    attributes: invalid_attributes
+                  }
                 }
-              }
-        expect(assigns(:user)).to eq(user)
-      end
+          expect(assigns(:user)).to eq(user)
+        end
 
-      it "redirects to the user" do
-        user = User.create! valid_attributes
-        patch :update, params: {
-                id: user.id,
-                data: {
+        it "re-renders the 'edit' template" do
+          user = User.create! valid_attributes
+          patch :update, params: {
                   id: user.id,
-                  type: 'users',
-                  attributes: new_attributes
+                  data: {
+                    id: user.id,
+                    type: 'users',
+                    attributes: invalid_attributes
+                  }
                 }
-              }
-        expect(response).to have_http_status(:success)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
       end
-    end
-
-    context "with invalid params" do
-      it "assigns the user as @user" do
-        user = User.create! valid_attributes
-        patch :update, params: {
-                id: user.id,
-                data: {
-                  id: user.id,
-                  type: 'users',
-                  attributes: invalid_attributes
-                }
-              }
-        expect(assigns(:user)).to eq(user)
-      end
-
-      it "re-renders the 'edit' template" do
-        user = User.create! valid_attributes
-        patch :update, params: {
-                id: user.id,
-                data: {
-                  id: user.id,
-                  type: 'users',
-                  attributes: invalid_attributes
-                }
-              }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
     end
   end
 
@@ -244,18 +244,18 @@ RSpec.describe UsersController, type: :controller do
         @request.headers["Content-Type"] = 'application/vnd.api+json'
         @request.headers["X-Api-Key"] = user.token
       end
-    it "destroys the requested user" do
-      user = User.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: user.to_param}
-      }.to change(User, :count).by(-1)
-    end
+      it "destroys the requested user" do
+        user = User.create! valid_attributes
+        expect {
+          delete :destroy, params: {id: user.to_param}
+        }.to change(User, :count).by(-1)
+      end
 
-    it "redirects to the users list" do
-      user = User.create! valid_attributes
-      delete :destroy, params: {id: user.to_param}
-      expect(response).to have_http_status(:no_content)
-    end
+      it "redirects to the users list" do
+        user = User.create! valid_attributes
+        delete :destroy, params: {id: user.to_param}
+        expect(response).to have_http_status(:no_content)
+      end
     end
   end
 

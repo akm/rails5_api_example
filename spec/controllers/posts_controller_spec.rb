@@ -72,6 +72,14 @@ RSpec.describe PostsController, type: :controller do
       l = jdata['links']
       expect(l['first']).to eq l['prev']
       expect(l['last' ]).to eq l['next']
+      expected_meta = {
+        'current-page' => 2,
+        'next-page' => 3,
+        'prev-page' => 1,
+        'total-pages' => 3,
+        'total-count' => Post.count, # 150
+      }
+      expect(jdata['meta']).to eq expected_meta
     end
   end
 

@@ -45,7 +45,7 @@ RSpec.describe PostsController, type: :controller do
             content: "Example content #{i}/#{n}",
             user: user,
             rating: 1 + i + rand(3),
-            category: i == 0 ? 'First' : 'Example'
+            category: i == 1 ? 'First' : 'Example'
           }
           FactoryGirl.create(:post, attrs)
         end
@@ -91,6 +91,13 @@ RSpec.describe PostsController, type: :controller do
       jdata = JSON.parse response.body
       expect(jdata['data'].length).to eq Post.per_page
       expect(jdata['data'][0]['attributes']['title']).to eq post.title
+    end
+
+    it "Should get filtered list" do
+      get :index, params: { filter: 'First' }
+      expect(response).to have_http_status(:success)
+      jdata = JSON.parse response.body
+      expect(jdata['data'].length).to eq Post.where(category: 'First').count
     end
   end
 

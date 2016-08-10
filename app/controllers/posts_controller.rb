@@ -4,6 +4,9 @@ class PostsController < ApplicationController
   # GET /posts
   def index
     @posts = Post.all
+    if params[:filter]
+      @posts = @posts.where(["category = ?", params[:filter]])
+    end
     if params[:sort]
       f = params[:sort].split(',').first
       field = f.sub(/\A\-/, '')

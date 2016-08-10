@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::API
 
   before_action :check_header
+  before_action :validate_login
 
   private def render_error(resource, status)
     render json: resource, status: status, adapter: :json_api,
@@ -24,11 +25,19 @@ class ApplicationController < ActionController::API
     head :conflict
   end
 
-  def validate_user
+  def validate_login
     token = request.headers["X-Api-Key"]
-    head :forbidden and return unless token
+    return unless token
     user = User.find_by token: token
-    head :forbidden and return unless user
+    return unless user
+    if 15.minutes.ago < user.updated_at
+      user.touch
+      @current_user = user
+    end
+  end
+
+  def validate_user
+    head :forbidden and return unless @current_user
   end
 
   def default_meta

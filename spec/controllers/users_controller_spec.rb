@@ -103,21 +103,33 @@ RSpec.describe UsersController, type: :controller do
         @request.headers["X-Api-Key"] = user.token
       end
       context "with valid params" do
+        let(:user_name){ 'User Number7' }
         it "creates a new User" do
           expect {
-            post :create, params: {user: valid_attributes}, session: valid_session
+            post :create, params: {
+                   data: {
+                     type: 'users',
+                     attributes: {
+                       name: user_name,
+                       password: 'password',
+                       password_confirmation: 'password'
+                     }
+                   }
+                 }
           }.to change(User, :count).by(1)
+          expect(assigns(:user)).to be_a(User)
+          expect(assigns(:user)).to be_persisted
+          expect(response).to have_http_status(:created)
+          jdata = JSON.parse response.body
+          expect(jdata['data']['attributes']['name']).to eq user_name
         end
 
         it "assigns a newly created user as @user" do
           post :create, params: {user: valid_attributes}, session: valid_session
-          expect(assigns(:user)).to be_a(User)
-          expect(assigns(:user)).to be_persisted
         end
 
         it "redirects to the created user" do
           post :create, params: {user: valid_attributes}, session: valid_session
-          expect(response).to have_http_status(:created)
         end
       end
 

@@ -32,15 +32,10 @@ RSpec.describe UsersController, type: :controller do
     valid_attributes.merge(name: '')
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # UsersController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
   describe "GET #index" do
     it "assigns all users as @users" do
       user = User.create! valid_attributes
-      get :index, params: {}, session: valid_session
+      get :index, params: {}
       expect(assigns(:users)).to eq([user])
       expect(response).to have_http_status(:success)
       expect(response.headers['Content-Type']).to match %r{application/vnd.api\+json}
@@ -53,7 +48,7 @@ RSpec.describe UsersController, type: :controller do
   describe "GET #show" do
     it "assigns the requested user as @user" do
       user = User.create! valid_attributes
-      get :show, params: {id: user.to_param}, session: valid_session
+      get :show, params: {id: user.to_param}
       expect(assigns(:user)).to eq(user)
       expect(response).to have_http_status(:success)
       expect(response.headers['Content-Type']).to match %r{application/vnd.api\+json}
@@ -65,7 +60,7 @@ RSpec.describe UsersController, type: :controller do
 
     it "returns 404 with invalid id" do
       user = User.create! valid_attributes
-      get :show, params: {id: 'z'}, session: valid_session
+      get :show, params: {id: 'z'}
       expect(assigns(:user)).not_to eq(user)
       expect(response).to have_http_status(:not_found)
       expect(response.headers['Content-Type']).to match %r{application/vnd.api\+json}
@@ -125,11 +120,11 @@ RSpec.describe UsersController, type: :controller do
         end
 
         it "assigns a newly created user as @user" do
-          post :create, params: {user: valid_attributes}, session: valid_session
+          post :create, params: {user: valid_attributes}
         end
 
         it "redirects to the created user" do
-          post :create, params: {user: valid_attributes}, session: valid_session
+          post :create, params: {user: valid_attributes}
         end
       end
 
@@ -167,20 +162,20 @@ RSpec.describe UsersController, type: :controller do
 
       it "updates the requested user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: new_attributes}, session: valid_session
+        put :update, params: {id: user.to_param, user: new_attributes}
         user.reload
         expect(user.name).to eq new_name
       end
 
       it "assigns the requested user as @user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: valid_attributes}, session: valid_session
+        put :update, params: {id: user.to_param, user: valid_attributes}
         expect(assigns(:user)).to eq(user)
       end
 
       it "redirects to the user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: valid_attributes}, session: valid_session
+        put :update, params: {id: user.to_param, user: valid_attributes}
         expect(response).to have_http_status(:success)
       end
     end
@@ -188,13 +183,13 @@ RSpec.describe UsersController, type: :controller do
     context "with invalid params" do
       it "assigns the user as @user" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: invalid_attributes}, session: valid_session
+        put :update, params: {id: user.to_param, user: invalid_attributes}
         expect(assigns(:user)).to eq(user)
       end
 
       it "re-renders the 'edit' template" do
         user = User.create! valid_attributes
-        put :update, params: {id: user.to_param, user: invalid_attributes}, session: valid_session
+        put :update, params: {id: user.to_param, user: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -204,13 +199,13 @@ RSpec.describe UsersController, type: :controller do
     it "destroys the requested user" do
       user = User.create! valid_attributes
       expect {
-        delete :destroy, params: {id: user.to_param}, session: valid_session
+        delete :destroy, params: {id: user.to_param}
       }.to change(User, :count).by(-1)
     end
 
     it "redirects to the users list" do
       user = User.create! valid_attributes
-      delete :destroy, params: {id: user.to_param}, session: valid_session
+      delete :destroy, params: {id: user.to_param}
       expect(response).to have_http_status(:no_content)
     end
   end

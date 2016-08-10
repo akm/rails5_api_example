@@ -38,6 +38,10 @@ RSpec.describe PostsController, type: :controller do
       post1 # to load
       get :index, params: {}
       expect(assigns(:posts)).to eq([post1])
+      expect(response).to have_http_status(:success)
+      jdata = JSON.parse response.body
+      expect(jdata['data'].length).to eq Post.count
+      expect(jdata['data'][0]['type']).to eq 'posts'
     end
   end
 

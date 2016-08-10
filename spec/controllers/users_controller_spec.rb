@@ -154,6 +154,12 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "PUT #update" do
+    context "with valid headers" do
+      let(:user){ FactoryGirl.create(:user) }
+      before do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+        @request.headers["X-Api-Key"] = user.token
+      end
     context "with valid params" do
       let(:new_name){ "The User #1" }
       let(:new_attributes) {
@@ -193,9 +199,16 @@ RSpec.describe UsersController, type: :controller do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+    end
   end
 
   describe "DELETE #destroy" do
+    context "with valid headers" do
+      let(:user){ FactoryGirl.create(:user) }
+      before do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+        @request.headers["X-Api-Key"] = user.token
+      end
     it "destroys the requested user" do
       user = User.create! valid_attributes
       expect {
@@ -207,6 +220,7 @@ RSpec.describe UsersController, type: :controller do
       user = User.create! valid_attributes
       delete :destroy, params: {id: user.to_param}
       expect(response).to have_http_status(:no_content)
+    end
     end
   end
 

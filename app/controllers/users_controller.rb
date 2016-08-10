@@ -47,8 +47,7 @@ class UsersController < ApplicationController
     render_error(user, :not_found)
   end
 
-  # Only allow a trusted parameter "white list" through.
   private def user_params
-    params.require(:user).permit(:name, :password_digest, :token, :description)
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params)
   end
 end

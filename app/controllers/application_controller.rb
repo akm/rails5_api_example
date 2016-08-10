@@ -23,4 +23,11 @@ class ApplicationController < ActionController::API
     end
     head :conflict
   end
+
+  def validate_user
+    token = request.headers["X-Api-Key"]
+    head :forbidden and return unless token
+    user = User.find_by token: token
+    head :forbidden and return unless user
+  end
 end

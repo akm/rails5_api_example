@@ -33,15 +33,10 @@ RSpec.describe PostsController, type: :controller do
     valid_attributes.merge(title: '')
   }
 
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # PostsController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
   describe "GET #index" do
     it "assigns all posts as @posts" do
       post1 # to load
-      get :index, params: {}, session: valid_session
+      get :index, params: {}
       expect(assigns(:posts)).to eq([post1])
     end
   end
@@ -49,7 +44,7 @@ RSpec.describe PostsController, type: :controller do
   describe "GET #show" do
     it "assigns the requested post as @post" do
       post1 # to load
-      get :show, params: {id: post1.to_param}, session: valid_session
+      get :show, params: {id: post1.to_param}
       expect(assigns(:post)).to eq(post1)
     end
   end
@@ -58,30 +53,30 @@ RSpec.describe PostsController, type: :controller do
     context "with valid params" do
       it "creates a new Post" do
         expect {
-          post :create, params: {post: valid_attributes}, session: valid_session
+          post :create, params: {post: valid_attributes}
         }.to change(Post, :count).by(1)
       end
 
       it "assigns a newly created post as @post" do
-        post :create, params: {post: valid_attributes}, session: valid_session
+        post :create, params: {post: valid_attributes}
         expect(assigns(:post)).to be_a(Post)
         expect(assigns(:post)).to be_persisted
       end
 
       it "redirects to the created post" do
-        post :create, params: {post: valid_attributes}, session: valid_session
+        post :create, params: {post: valid_attributes}
         expect(response).to have_http_status(:created)
       end
     end
 
     context "with invalid params" do
       it "assigns a newly created but unsaved post as @post" do
-        post :create, params: {post: invalid_attributes}, session: valid_session
+        post :create, params: {post: invalid_attributes}
         expect(assigns(:post)).to be_a_new(Post)
       end
 
       it "re-renders the 'new' template" do
-        post :create, params: {post: invalid_attributes}, session: valid_session
+        post :create, params: {post: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -96,20 +91,20 @@ RSpec.describe PostsController, type: :controller do
 
       it "updates the requested post" do
         post1 # to load
-        put :update, params: {id: post1.to_param, post: new_attributes}, session: valid_session
+        put :update, params: {id: post1.to_param, post: new_attributes}
         post1.reload
         expect(post1.title).to eq new_title
       end
 
       it "assigns the requested post as @post" do
         post1 # to load
-        put :update, params: {id: post1.to_param, post: valid_attributes}, session: valid_session
+        put :update, params: {id: post1.to_param, post: valid_attributes}
         expect(assigns(:post)).to eq(post1)
       end
 
       it "redirects to the post" do
         post1 # to load
-        put :update, params: {id: post1.to_param, post: valid_attributes}, session: valid_session
+        put :update, params: {id: post1.to_param, post: valid_attributes}
         expect(response).to have_http_status(:success)
       end
     end
@@ -117,13 +112,13 @@ RSpec.describe PostsController, type: :controller do
     context "with invalid params" do
       it "assigns the post as @post" do
         post1 # to load
-        put :update, params: {id: post1.to_param, post: invalid_attributes}, session: valid_session
+        put :update, params: {id: post1.to_param, post: invalid_attributes}
         expect(assigns(:post)).to eq(post1)
       end
 
       it "re-renders the 'edit' template" do
         post1 # to load
-        put :update, params: {id: post1.to_param, post: invalid_attributes}, session: valid_session
+        put :update, params: {id: post1.to_param, post: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -133,13 +128,13 @@ RSpec.describe PostsController, type: :controller do
     it "destroys the requested post" do
       post1 # to load
       expect {
-        delete :destroy, params: {id: post1.to_param}, session: valid_session
+        delete :destroy, params: {id: post1.to_param}
       }.to change(Post, :count).by(-1)
     end
 
     it "redirects to the posts list" do
       post1 # to load
-      delete :destroy, params: {id: post1.to_param}, session: valid_session
+      delete :destroy, params: {id: post1.to_param}
       expect(response).to have_http_status(:no_content)
     end
   end

@@ -42,6 +42,10 @@ class UsersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      user = User.new
+      user.errors.add(:id, "Wrong ID provided")
+      render_error(user, :not_found)
     end
 
     # Only allow a trusted parameter "white list" through.

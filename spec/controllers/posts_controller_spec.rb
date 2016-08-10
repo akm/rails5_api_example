@@ -50,6 +50,10 @@ RSpec.describe PostsController, type: :controller do
   end
 
   describe "POST #create" do
+    context "with valid headers" do
+      before do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+      end
     context "with valid params" do
       it "creates a new Post" do
         expect {
@@ -80,9 +84,14 @@ RSpec.describe PostsController, type: :controller do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+    end
   end
 
   describe "PUT #update" do
+    context "with valid headers" do
+      before do
+        @request.headers["Content-Type"] = 'application/vnd.api+json'
+      end
     context "with valid params" do
       let(:new_title){ "New Title #1" }
       let(:new_attributes) {
@@ -121,6 +130,7 @@ RSpec.describe PostsController, type: :controller do
         put :update, params: {id: post1.to_param, post: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_entity)
       end
+    end
     end
   end
 

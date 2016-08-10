@@ -139,7 +139,7 @@ RSpec.describe UsersController, type: :controller do
                  data: {
                    type: 'users',
                    attributes: {
-                     full_name: nil,
+                     name: nil,
                      password: nil,
                      password_confirmation: nil }}}
           expect(response).to have_http_status(:unprocessable_entity)
@@ -147,7 +147,7 @@ RSpec.describe UsersController, type: :controller do
           pointers = jdata['errors'].map{ |e|
             e['source']['pointer'].split('/').last
           }.sort
-          expect(pointers).to eq ['full-name','password']
+          expect(pointers).to eq ['name','password']
         end
       end
     end

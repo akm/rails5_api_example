@@ -54,8 +54,8 @@
 
           <nav>
             <ul class="pager">
-              <li><a href="#">Previous</a></li>
-              <li><a href="#">Next</a></li>
+              <li><a class="linkToPrev" href="#">Previous</a></li>
+              <li><a class="linkToNext" href="#">Next</a></li>
             </ul>
           </nav>
 
@@ -111,18 +111,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-	  $(function() {
-	    $.getJSON("/posts.json", {}, function(res) {
-          var template = Hogan.compile($("#blogsArea").html());
-          var renderdArray = res.data.map(function(blog) {
-				return template.render(blog);
-	      });
-          console.log("renderdArray: ")
-          console.log(renderdArray)
-		  $("#blogsArea").html(renderdArray.join(" "));
-		});
-      });
-    </script>
+    <script src="js/blog.js"></script>
   </body>
 </html>

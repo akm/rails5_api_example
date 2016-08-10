@@ -73,7 +73,9 @@ RSpec.describe PostsController, type: :controller do
       expect(l['first']).to eq l['prev']
       expect(l['last' ]).to eq l['next']
       expected_meta = {
+        'authors' => ['akm'],
         'current-page' => 2,
+        'licence' => 'CC-0',
         'next-page' => 3,
         'prev-page' => 1,
         'total-pages' => 3,

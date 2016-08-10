@@ -30,4 +30,11 @@ class ApplicationController < ActionController::API
     user = User.find_by token: token
     head :forbidden and return unless user
   end
+
+  def default_meta
+    {
+      licence: 'CC-0',
+      authors: ['akm']
+    }
+  end
 end

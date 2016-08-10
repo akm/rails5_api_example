@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   # GET /posts
   def index
     @posts = Post.paginate(:page => params[:page])
-    render json: @posts, meta: pagination_meta(@posts)
+    render json: @posts, meta: pagination_meta(@posts).merge(default_meta)
   end
 
   private def pagination_meta(object)

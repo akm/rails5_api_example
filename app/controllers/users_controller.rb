@@ -38,17 +38,17 @@ class UsersController < ApplicationController
     @user.destroy
   end
 
-    # Use callbacks to share common setup or constraints between actions.
-    private def set_user
-      @user = User.find(params[:id])
-    rescue ActiveRecord::RecordNotFound
-      user = User.new
-      user.errors.add(:id, "Wrong ID provided")
-      render_error(user, :not_found)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  private def set_user
+    @user = User.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    user = User.new
+    user.errors.add(:id, "Wrong ID provided")
+    render_error(user, :not_found)
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    private def user_params
-      params.require(:user).permit(:name, :password_digest, :token, :description)
-    end
+  # Only allow a trusted parameter "white list" through.
+  private def user_params
+    params.require(:user).permit(:name, :password_digest, :token, :description)
+  end
 end

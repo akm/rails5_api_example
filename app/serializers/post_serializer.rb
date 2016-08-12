@@ -17,6 +17,10 @@
 #
 
 class PostSerializer < ActiveModel::Serializer
-  attributes :id, :title, :content, :category, :rating, :created_at, :updated_at
+  attributes :id, :title, :username, :content, :category, :rating, :created_at, :updated_at
   has_one :user
+
+  def username
+    object.user.name
+  end
 end

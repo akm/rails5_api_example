@@ -20,6 +20,7 @@ $(function() {
         },
 
         showLoginDialog: function(){
+            $('#loginModal').modal();
         },
 
         prevClick: function(){

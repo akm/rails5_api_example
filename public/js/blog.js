@@ -34,10 +34,6 @@ $(function() {
             }
         },
 
-        showLoginDialog: function(){
-            $('#loginModal').modal('show');
-        },
-
         showToLogin: function(){
 			$('.loginUserName').hide();
 			$(".linkToLogout").hide();
@@ -124,7 +120,7 @@ $(function() {
         },
 
         loginClick: function(){
-            App.showLoginDialog();
+            $('#loginModal').modal('show');
         },
 
         logoutClick: function(){

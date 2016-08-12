@@ -8,9 +8,11 @@ $(function() {
 
         init: function(){
             this.template = Hogan.compile($("#blogsArea").html());
+            this.logout();
             $(".linkToPrev").click(this.prevClick);
             $(".linkToNext").click(this.nextClick);
             $(".linkToLogin").click(this.loginClick);
+            $(".linkToLogout").click(this.logoutClick);
             $(".form-signin").submit(this.loginSubmit);
         },
 
@@ -23,7 +25,14 @@ $(function() {
         },
 
         showLoginDialog: function(){
-            $('#loginModal').modal();
+            $('#loginModal').modal('show');
+        },
+
+        logout: function(){
+            App.current_user_token = null;
+            $('.loginUserName').hide();
+            $(".linkToLogout").hide();
+            $(".linkToLogin").show();
         },
 
         prevClick: function(){
@@ -38,6 +47,16 @@ $(function() {
 
         loginClick: function(){
             App.showLoginDialog();
+        },
+
+        logoutClick: function(){
+            $.ajax("/sessions/" + App.current_user_token, {
+                method: 'DELETE',
+                contentType: 'application/vnd.api+json'
+            }).then(function(res) {
+                App.logout();
+            });
+
         },
 
         loginSubmit: function(){
@@ -61,6 +80,10 @@ $(function() {
             }).then(function(res) {
                 App.current_user_token = res.data.attributes.token;
                 $('.loginUserName').html(App.current_user_name);
+                $('.loginUserName').show();
+                $(".linkToLogout").show();
+                $(".linkToLogin").hide();
+                $('#loginModal').modal('hide');
             });
         }
     };

@@ -13,7 +13,7 @@ $(function() {
         refresh: function(){
             var self = this;
             var path = "/posts.json?page=" + this.current_page;
-	        $.getJSON(path, {}, function(res) {
+	        $.getJSON(path, {}).then(function(res) {
                 var renderdArray = res.data.map(function(blog) {
 				    return self.template.render(blog);
 	            });

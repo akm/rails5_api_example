@@ -26,7 +26,7 @@ class ApplicationController < ActionController::API
   end
 
   def validate_login
-    token = request.headers["X-Api-Key"]
+    token = request.headers["HTTP_X_API_KEY"]
     return unless token
     user = User.find_by token: token
     return unless user

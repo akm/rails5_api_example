@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :update, :destroy]
+  before_action :validate_user, only: [:create, :update, :destroy]
+  before_action :validate_type, only: [:create, :update]
 
   # GET /posts
   def index
@@ -37,7 +39,7 @@ class PostsController < ApplicationController
   # POST /posts
   def create
     @post = Post.new(post_params)
-
+    @post.user = @current_user
     if @post.save
       render json: @post, status: :created, location: @post
     else
@@ -67,6 +69,6 @@ class PostsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def post_params
-      params.require(:post).permit(:user_id, :title, :content, :category, :rating)
+      ActiveModelSerializers::Deserialization.jsonapi_parse(params)
     end
 end

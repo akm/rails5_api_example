@@ -8,6 +8,7 @@ $(function() {
             this.template = Hogan.compile($("#blogsArea").html());
             $(".linkToPrev").click(this.prevClick);
             $(".linkToNext").click(this.nextClick);
+            $(".linkToLogin").click(this.loginClick);
         },
 
         refresh: function(){
@@ -16,6 +17,9 @@ $(function() {
 	        $.getJSON(path, {}).then(function(res) {
                 $("#blogsArea").html( self.template.render({blogs: res.data}) );
 	        });
+        },
+
+        showLoginDialog: function(){
         },
 
         prevClick: function(){
@@ -27,6 +31,10 @@ $(function() {
             App.current_page++;
             App.refresh();
         },
+
+        loginClick: function(){
+            App.showLoginDialog();
+        }
     };
 
     App.init();

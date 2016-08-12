@@ -13,7 +13,9 @@ $(function() {
             $(".linkToNext").click(this.nextClick);
             $(".linkToLogin").click(this.loginClick);
             $(".linkToLogout").click(this.logoutClick);
+            $(".linkToCreate").click(this.newPostClick);
             $(".form-signin").submit(this.loginSubmit);
+            $(".blog-submit-btn").click(this.postSubmit);
         },
 
         refresh: function(){
@@ -35,12 +37,14 @@ $(function() {
         },
 
         showToLogin: function(){
+            $('.linkToCreate').hide();
 			$('.loginUserName').hide();
 			$(".linkToLogout").hide();
 			$(".linkToLogin").show();
         },
 
         showToLogout: function(){
+            $('.linkToCreate').show();
             $('.loginUserName').html(App.current_user_name);
             $('.loginUserName').show();
             $(".linkToLogout").show();
@@ -158,6 +162,35 @@ $(function() {
                 App.showToLogout();
                 $('#loginModal').modal('hide');
             });
+        },
+
+        newPostClick: function(){
+            $('#postModal').modal('show');
+        },
+
+        postSubmit: function(){
+            console.log("postSubmit");
+            $.ajax("/posts", {
+                method: 'POST',
+                contentType: 'application/vnd.api+json',
+                dataType: "json",
+                data: JSON.stringify({
+                    data: {
+                        type: 'posts',
+                        attributes: {
+                            title: $("#blog-title").get(0).value,
+                            content: $("#blog-content").get(0).value
+                        }
+                    }
+                }),
+                headers: {
+                    "X_Api_Key" : App.current_user_token
+                },
+                processData: false
+            }).then(function(res) {
+                App.refresh();
+            });
+
         }
     };
 

@@ -42,6 +42,7 @@
 
         <div class="col-sm-8 blog-main">
           <div id="blogsArea">
+            {{#blogs}}
 
             <div class="blog-post">
               <h2 class="blog-post-title">{{ attributes.title }}</h2>
@@ -50,6 +51,7 @@
               <p>{{ attributes.content }}</p>
             </div><!-- /.blog-post -->
 
+            {{/blogs}}
           </div>
 
           <nav>

@@ -14,10 +14,7 @@ $(function() {
             var self = this;
             var path = "/posts.json?page=" + this.current_page;
 	        $.getJSON(path, {}).then(function(res) {
-                var renderdArray = res.data.map(function(blog) {
-				    return self.template.render(blog);
-	            });
-		        $("#blogsArea").html(renderdArray.join(" "));
+                $("#blogsArea").html( self.template.render({blogs: res.data}) );
 	        });
         },
 

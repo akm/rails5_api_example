@@ -21,7 +21,13 @@ $(function() {
         refresh: function(){
             var self = this;
             var path = "/posts.json?page=" + this.current_page;
-	        $.getJSON(path, {}).then(function(res) {
+            var headers =
+                App.current_user_token ? {"X_Api_Key" : App.current_user_token } : {}
+            $.ajax(path, {
+                method: 'GET',
+                contentType: 'application/vnd.api+json',
+                headers: headers
+            }).then(function(res) {
                 $("#blogsArea").html( self.template.render({blogs: res.data}) );
 	        });
         },

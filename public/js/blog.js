@@ -1,6 +1,6 @@
 $(function() {
     var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    var App = {
+    App = {
         current_page: 1,
         template: null,
         current_user_token: null,
@@ -8,7 +8,6 @@ $(function() {
 
         init: function(){
             this.template = Hogan.compile($("#blogsArea").html());
-            this.loginFromDb();
             $(".linkToPrev").click(this.prevClick);
             $(".linkToNext").click(this.nextClick);
             $(".linkToLogin").click(this.loginClick);
@@ -16,6 +15,7 @@ $(function() {
             $(".linkToCreate").click(this.newPostClick);
             $(".form-signin").submit(this.loginSubmit);
             $(".blog-submit-btn").click(this.postSubmit);
+            this.loginFromDb.apply(this, arguments);
         },
 
         refresh: function(){
@@ -58,6 +58,7 @@ $(function() {
         },
 
         loginFromDb: function(){
+            var args = Array.prototype.concat.apply([], arguments) // flatten
             App.dbStore("current_session", function(store){
                 var req1 = store.get("user_name")
                 req1.onsuccess = function(){
@@ -69,6 +70,7 @@ $(function() {
                     if (req2.result) {
                         App.current_user_token = req2.result.value;
                     }
+                    args.forEach(function(arg){ arg.call(App) });
                     if (App.current_user_token) {
                         App.showToLogout();
                     } else {
@@ -201,6 +203,5 @@ $(function() {
         }
     };
 
-    App.init();
-    App.refresh();
+    App.init(App.refresh);
 });

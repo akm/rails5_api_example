@@ -1,0 +1,23 @@
+{
+  "name": "Blog App",
+  "description": "Rails5 API App Example",
+  "version": "0.0.0.1",
+  "manifest_version":2,
+  "app": {
+    "urls": [
+      "http://192.168.1.107:3000/"
+    ],
+    "launch": {
+      "web_url": "http://192.168.1.107:3000/",
+      "container": "panel"
+    }
+  },
+  "icons": {
+    "128": "blog-icon-128.png"
+  },
+  "permissions": [
+    "notifications",
+    "geolocation",
+    "background"
+  ]
+}

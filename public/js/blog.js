@@ -188,6 +188,7 @@ $(function() {
                 },
                 processData: false
             }).then(function(res) {
+                $('#postModal').modal('hide');
                 App.refresh();
             });
 

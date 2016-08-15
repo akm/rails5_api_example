@@ -17,7 +17,9 @@ class PostsController < ApplicationController
       @posts = @posts.order("#{field} #{order}")
     end
     @posts = @posts.paginate(:page => params[:page])
-    render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']
+    User.current(@current_user) do
+      render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']
+    end
   end
 
   private def pagination_meta(object)

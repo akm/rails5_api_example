@@ -29,6 +29,7 @@ $(function() {
                 headers: headers
             }).then(function(res) {
                 $("#blogsArea").html( self.template.render({blogs: res.data}) );
+                $(".linkToUpdate").click(App.editClick);
 	        });
         },
 
@@ -173,13 +174,41 @@ $(function() {
         },
 
         newPostClick: function(){
+            $("#blog-title").val(null);
+            $("#blog-content").val(null);
+            $('#postModal').data('blog-id', null);
             $('#postModal').modal('show');
+        },
+
+        editClick: function(event){
+            var headers =
+                App.current_user_token ? {"X_Api_Key" : App.current_user_token } : {}
+            var blog_id = $(event.target).data('blog-id');
+            $.ajax("/posts/" + blog_id, {
+                method: 'GET',
+                contentType: 'application/vnd.api+json',
+                headers: headers
+            }).then(function(res) {
+                $("#blog-title").val(res.data.attributes.title);
+                $("#blog-content").val(res.data.attributes.content);
+                $('#postModal').data('blog-id', blog_id);
+                $('#postModal').modal('show');
+            });
         },
 
         postSubmit: function(){
             console.log("postSubmit");
-            $.ajax("/posts", {
-                method: 'POST',
+            var blog_id = $('#postModal').data('blog-id');
+            var path, meth;
+            if (blog_id) {
+                meth = 'PATCH'
+                path = "/posts/" + blog_id
+            } else {
+                meth = 'POST'
+                path = "/posts"
+            }
+            $.ajax(path, {
+                method: meth,
                 contentType: 'application/vnd.api+json',
                 dataType: "json",
                 data: JSON.stringify({

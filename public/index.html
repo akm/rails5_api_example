@@ -75,7 +75,13 @@
 
             <div class="blog-post">
               <h2 class="blog-post-title">{{ attributes.title }}</h2>
-              <p class="blog-post-meta">{{ attributes.created-at }} by <a href="#">{{ attributes.username }}</a></p>
+              <p class="blog-post-meta">
+                {{ attributes.created-at }} by <a href="#">{{ attributes.username }}</a>
+                {{#attributes.editable?}}
+                <a href="#" class="linkToUpdate" data-blog-id="{{ attributes.id }}">Edit</a>
+                {{/attributes.editable?}}
+              </p>
+
 
               <p>{{ attributes.content }}</p>
             </div><!-- /.blog-post -->

@@ -9,13 +9,12 @@ class PostsController < ApplicationController
     if params[:filter]
       @posts = @posts.where(["category = ?", params[:filter]])
     end
-    if params[:sort]
-      f = params[:sort].split(',').first
-      field = f.sub(/\A\-/, '')
-      order = (f =~ /\A\-/) ? 'DESC' : 'ASC'
-      if Post.new.has_attribute?(field)
-        @posts = @posts.order("#{field} #{order}")
-      end
+    sort = params[:sort] || '-created_at'
+    f = sort.split(',').first
+    field = f.sub(/\A\-/, '')
+    order = (f =~ /\A\-/) ? 'DESC' : 'ASC'
+    if Post.new.has_attribute?(field)
+      @posts = @posts.order("#{field} #{order}")
     end
     @posts = @posts.paginate(:page => params[:page])
     render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']

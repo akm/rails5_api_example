@@ -1,15 +1,7 @@
 {
     "short_name": "akm Blog App",
     "name": "akm Rails5 API Example Blog App",
-    "app": {
-        "urls": [
-            "http://192.168.1.107:3000/"
-        ]
-        "launch": {
-            "web_url": "http://192.168.1.107:3000/",
-            "container": "standalone"
-        },
-    },
+    "description": "akm Rails5 API Example Blog App",
     "icons": [
         {
             "src": "blog-icon-36.png",
@@ -51,6 +43,6 @@
     "theme_color": "#9E9E9E",
     "background_color": "#9E9E9E",
     "start_url": "index.html",
-    "display": "standalone",
+    "display": "minimal-ui",
     "orientation": "portrait"
 }

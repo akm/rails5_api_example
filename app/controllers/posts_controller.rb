@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :update, :destroy]
+  before_action :validate_user, only: [:create, :update, :destroy]
+  before_action :validate_type, only: [:create, :update]
 
   # GET /posts
   def index
@@ -7,16 +9,17 @@ class PostsController < ApplicationController
     if params[:filter]
       @posts = @posts.where(["category = ?", params[:filter]])
     end
-    if params[:sort]
-      f = params[:sort].split(',').first
-      field = f.sub(/\A\-/, '')
-      order = (f =~ /\A\-/) ? 'DESC' : 'ASC'
-      if Post.new.has_attribute?(field)
-        @posts = @posts.order("#{field} #{order}")
-      end
+    sort = params[:sort] || '-created_at'
+    f = sort.split(',').first
+    field = f.sub(/\A\-/, '')
+    order = (f =~ /\A\-/) ? 'DESC' : 'ASC'
+    if Post.new.has_attribute?(field)
+      @posts = @posts.order("#{field} #{order}")
     end
     @posts = @posts.paginate(:page => params[:page])
-    render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']
+    User.current(@current_user) do
+      render json: @posts, meta: pagination_meta(@posts).merge(default_meta), include: ['user']
+    end
   end
 
   private def pagination_meta(object)
@@ -37,7 +40,7 @@ class PostsController < ApplicationController
   # POST /posts
   def create
     @post = Post.new(post_params)
-
+    @post.user = @current_user
     if @post.save
       render json: @post, status: :created, location: @post
     else
@@ -67,6 +70,6 @@ class PostsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def post_params
-      params.require(:post).permit(:user_id, :title, :content, :category, :rating)
+      ActiveModelSerializers::Deserialization.jsonapi_parse(params)
     end
 end

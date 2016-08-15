@@ -17,6 +17,15 @@
 #
 
 class PostSerializer < ActiveModel::Serializer
-  attributes :id, :title, :content, :category, :rating, :created_at, :updated_at
+  attributes :id, :title, :content, :category, :rating, :created_at, :updated_at,
+             :username, :editable?
   has_one :user
+
+  def username
+    object.user.name
+  end
+
+  def editable?
+    User.current_user.try(:id) == object.user_id
+  end
 end

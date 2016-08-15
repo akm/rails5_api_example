@@ -1,6 +1,6 @@
 $(function() {
     var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    var App = {
+    App = {
         current_page: 1,
         template: null,
         current_user_token: null,
@@ -8,19 +8,28 @@ $(function() {
 
         init: function(){
             this.template = Hogan.compile($("#blogsArea").html());
-            this.loginFromDb();
             $(".linkToPrev").click(this.prevClick);
             $(".linkToNext").click(this.nextClick);
             $(".linkToLogin").click(this.loginClick);
             $(".linkToLogout").click(this.logoutClick);
+            $(".linkToCreate").click(this.newPostClick);
             $(".form-signin").submit(this.loginSubmit);
+            $(".blog-submit-btn").click(this.postSubmit);
+            this.loginFromDb.apply(this, arguments);
         },
 
         refresh: function(){
             var self = this;
             var path = "/posts.json?page=" + this.current_page;
-	        $.getJSON(path, {}).then(function(res) {
+            var headers =
+                App.current_user_token ? {"X_Api_Key" : App.current_user_token } : {}
+            $.ajax(path, {
+                method: 'GET',
+                contentType: 'application/vnd.api+json',
+                headers: headers
+            }).then(function(res) {
                 $("#blogsArea").html( self.template.render({blogs: res.data}) );
+                $(".linkToUpdate").click(App.editClick);
 	        });
         },
 
@@ -35,12 +44,14 @@ $(function() {
         },
 
         showToLogin: function(){
+            $('.linkToCreate').hide();
 			$('.loginUserName').hide();
 			$(".linkToLogout").hide();
 			$(".linkToLogin").show();
         },
 
         showToLogout: function(){
+            $('.linkToCreate').show();
             $('.loginUserName').html(App.current_user_name);
             $('.loginUserName').show();
             $(".linkToLogout").show();
@@ -48,6 +59,7 @@ $(function() {
         },
 
         loginFromDb: function(){
+            var args = Array.prototype.concat.apply([], arguments) // flatten
             App.dbStore("current_session", function(store){
                 var req1 = store.get("user_name")
                 req1.onsuccess = function(){
@@ -59,6 +71,7 @@ $(function() {
                     if (req2.result) {
                         App.current_user_token = req2.result.value;
                     }
+                    args.forEach(function(arg){ arg.call(App) });
                     if (App.current_user_token) {
                         App.showToLogout();
                     } else {
@@ -158,9 +171,66 @@ $(function() {
                 App.showToLogout();
                 $('#loginModal').modal('hide');
             });
+        },
+
+        newPostClick: function(){
+            $("#blog-title").val(null);
+            $("#blog-content").val(null);
+            $('#postModal').data('blog-id', null);
+            $('#postModal').modal('show');
+        },
+
+        editClick: function(event){
+            var headers =
+                App.current_user_token ? {"X_Api_Key" : App.current_user_token } : {}
+            var blog_id = $(event.target).data('blog-id');
+            $.ajax("/posts/" + blog_id, {
+                method: 'GET',
+                contentType: 'application/vnd.api+json',
+                headers: headers
+            }).then(function(res) {
+                $("#blog-title").val(res.data.attributes.title);
+                $("#blog-content").val(res.data.attributes.content);
+                $('#postModal').data('blog-id', blog_id);
+                $('#postModal').modal('show');
+            });
+        },
+
+        postSubmit: function(){
+            console.log("postSubmit");
+            var blog_id = $('#postModal').data('blog-id');
+            var path, meth;
+            if (blog_id) {
+                meth = 'PATCH'
+                path = "/posts/" + blog_id
+            } else {
+                meth = 'POST'
+                path = "/posts"
+            }
+            $.ajax(path, {
+                method: meth,
+                contentType: 'application/vnd.api+json',
+                dataType: "json",
+                data: JSON.stringify({
+                    data: {
+                        type: 'posts',
+                        attributes: {
+                            title: $("#blog-title").get(0).value,
+                            content: $("#blog-content").get(0).value
+                        }
+                    }
+                }),
+                headers: {
+                    "X_Api_Key" : App.current_user_token
+                },
+                processData: false
+            }).then(function(res) {
+                $('#postModal').modal('hide');
+                App.refresh();
+            });
+
         }
     };
 
-    App.init();
-    App.refresh();
+    App.init(App.refresh);
 });

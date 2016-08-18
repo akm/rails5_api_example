@@ -1,216 +1,72 @@
-<!DOCTYPE html>
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-    <title>Blog Template for Bootstrap</title>
+  <title>My App</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
 
-    <!-- Custom styles for this template -->
-    <link href="css/blog.css" rel="stylesheet">
+  <meta name="theme-color" content="#fff">
+  <link rel="manifest" href="/manifest.json">
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" sizes="192x192" href="/blog-icon-192.png">
-  </head>
+  <script>
 
-  <body>
+    // setup Polymer options
+    window.Polymer = {lazyRegister: true, dom: 'shadow'};
 
+    // load webcomponents polyfills
+    (function() {
+      if ('registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')) {
+        // browser has web components
+      } else {
+        // polyfill web components
+        var e = document.createElement('script');
+        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+        document.head.appendChild(e);
+      }
+    })();
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a class="linkToCreate" href="#">New Post</a></li>
-            <li><a class="loginUserName">{{ account_name }}</a></li>
-            <li><a class="linkToLogin" href="#">ログイン</a></li>
-            <li><a class="linkToLogout" href="#">ログアウト</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    // load pre-caching service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js');
+      });
+    }
 
-    <div class="container">
+  </script>
 
-      <div class="blog-header">
-        <h1 class="blog-title">The Bootstrap Blog</h1>
-        <p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>
-      </div>
+  <link rel="import" href="/src/blog-app.html">
 
-      <div class="row">
+  <style>
 
-        <div class="col-sm-8 blog-main">
-          <div id="blogsArea">
-            {{#blogs}}
+    body {
+      margin: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      background-color: #eee;
+    }
 
-            <div class="blog-post">
-              <h2 class="blog-post-title">{{ attributes.title }}</h2>
-              <p class="blog-post-meta">
-                {{ attributes.created-at }} by <a href="#">{{ attributes.username }}</a>
-                {{#attributes.editable?}}
-                <a href="#" class="linkToUpdate" data-blog-id="{{ id }}">Edit</a>
-                {{/attributes.editable?}}
-              </p>
+  </style>
 
+</head>
+<body>
 
-              <p>{{ attributes.content }}</p>
-            </div><!-- /.blog-post -->
+  <blog-app></blog-app>
 
-            {{/blogs}}
-          </div>
-
-          <nav>
-            <ul class="pager">
-              <li><a class="linkToPrev" href="#">Previous</a></li>
-              <li><a class="linkToNext" href="#">Next</a></li>
-            </ul>
-          </nav>
-
-        </div><!-- /.blog-main -->
-
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset">
-            <h4>About</h4>
-            <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-          </div>
-          <div class="sidebar-module">
-            <h4>Archives</h4>
-            <ol class="list-unstyled">
-              <li><a href="#">March 2014</a></li>
-              <li><a href="#">February 2014</a></li>
-              <li><a href="#">January 2014</a></li>
-              <li><a href="#">December 2013</a></li>
-              <li><a href="#">November 2013</a></li>
-              <li><a href="#">October 2013</a></li>
-              <li><a href="#">September 2013</a></li>
-              <li><a href="#">August 2013</a></li>
-              <li><a href="#">July 2013</a></li>
-              <li><a href="#">June 2013</a></li>
-              <li><a href="#">May 2013</a></li>
-              <li><a href="#">April 2013</a></li>
-            </ol>
-          </div>
-          <div class="sidebar-module">
-            <h4>Elsewhere</h4>
-            <ol class="list-unstyled">
-              <li><a href="#">GitHub</a></li>
-              <li><a href="#">Twitter</a></li>
-              <li><a href="#">Facebook</a></li>
-            </ol>
-          </div>
-        </div><!-- /.blog-sidebar -->
-
-      </div><!-- /.row -->
-
-    </div><!-- /.container -->
-
-    <footer class="blog-footer">
-      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
-      <p>
-        <a href="#">Back to top</a>
-      </p>
-    </footer>
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://twitter.github.com/hogan.js/builds/3.0.1/hogan-3.0.1.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/blog.js"></script>
-
-    <!-- Login modal dialog -->
-    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="loginModalLabel">New message</h4>
-          </div>
-          <div class="modal-body">
-            <form class="form-signin">
-              <h2 class="form-signin-heading">Please sign in</h2>
-              <label for="inputEmail" class="sr-only">Email address</label>
-              <input type="text" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-              <label for="inputPassword" class="sr-only">Password</label>
-              <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="checkRememberMe" value="remember-me"> Remember me
-                </label>
-              </div>
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Send message</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="postModalLabel">New Post</h4>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <label for="blog-title" class="control-label">Title: </label>
-                <input type="text" class="form-control" id="blog-title">
-              </div>
-              <div class="form-group">
-                <label for="blog-content" class="control-label">Content:</label>
-                <textarea class="form-control" id="blog-content"></textarea>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary blog-submit-btn">Send message</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </body>
+</body>
 </html>

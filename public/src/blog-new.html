@@ -1,0 +1,94 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/idb-node/idb-node.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="blog-unit.html">
+
+<script src="../bower_components/node-uuid/uuid.js"></script>
+
+<dom-module id="blog-new">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+    section {
+      border-radius: 3px;
+      box-shadow: 1px 1px 3px #ccc;
+      padding: 1em 2em;
+      width: 40%;
+      min-height: 500px;
+      float: left;
+    }
+    </style>
+
+    <idb-node id="idb"
+              database-name="blog-app"
+              version="2"
+              object-store="blogs"
+              key-path="uuid"></idb-node>
+
+    <section>
+      <paper-input label="Title" value="{{title}}"></paper-input>
+      <paper-textarea label="Content"  value="{{content}}" rows="3"></paper-textarea>
+      <paper-button raised on-click="create"><iron-icon icon="save"></iron-icon>Save</paper-button>
+    </section>
+    <section>
+      <blog-unit
+         title="{{title}}"
+         content="{{content}}"></blog-unit>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'blog-new',
+      properties: {
+        title: {
+          type: String,
+          value: ''
+        },
+        content: {
+          type: String,
+          value: ''
+        }
+      },
+      create: function(e) {
+        var blog = {
+          uuid: uuid.v1(),
+          title: this.title,
+          content: this.content,
+          created_at: new Date().getTime()
+        };
+        this.$.idb.put(blog).then(() => {
+          this.fire('pageEvent', {page: 'index'});
+          this.title = '';
+          this.content = '';
+        });
+      },
+      editingBlog: function(){
+        console.log("editingBlog");
+        return {title: this.title, content: this.content};
+      }
+    });
+
+  </script>
+
+</dom-module>

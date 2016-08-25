@@ -1,0 +1,14 @@
+<script src="../bower_components/node-uuid/uuid.js"></script>
+
+<script>
+  BlogDbBehavior = {
+    properties: {
+      idb: {
+        type: Object
+      }
+    },
+    generateUUID: function(){
+      return uuid.v1();
+    }
+  };
+</script>

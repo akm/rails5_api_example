@@ -19,7 +19,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/idb-node/idb-database.html">
+<link rel="import" href="../bower_components/idb-node/idb-object-store.html">
 <link rel="import" href="blog-icons.html">
+<link rel="import" href="blog-db-behavior.html">
 
 <dom-module id="blog-app">
 
@@ -65,6 +68,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <idb-database id="idb-database" name="blog-app" version="1">
+      <idb-object-store id="idb-blogs"    name="blogs"    key-path="uuid"></idb-object-store>
+      <idb-object-store id="idb-settings" name="settings" key-path="key" ></idb-object-store>
+    </idb-database>
+
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
@@ -80,6 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="index" href="/index">List</a>
           <a name="new" href="/new">New</a>
+          <a name="settings" href="/settings">Settings</a>
         </iron-selector>
       </app-drawer>
 
@@ -94,9 +103,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <blog-index name="index" id="blog-index"></blog-index>
-          <blog-new name="new"></blog-new>
-          <blog-edit name="edit" subroute="{{subroute}}"></blog-edit>
+          <blog-index idb="[[idb]]" name="index" id="blog-index"></blog-index>
+          <blog-new   idb="[[idb]]" name="new"  user="[[user]]"></blog-new>
+          <blog-edit  idb="[[idb]]" name="edit" user="[[user]]" subroute="{{subroute}}"></blog-edit>
+          <blog-settings idb="[[idb]]" name="settings" user="[[user]]"></blog-settings>
         </iron-pages>
 
       </app-header-layout>
@@ -110,6 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
 
       is: 'blog-app',
+      behaviors: [BlogDbBehavior],
 
       properties: {
 
@@ -119,9 +130,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_pageChanged'
         },
 
+        user: {
+          type: Object,
+        },
       },
 
       ready: function() {
+        this.$['idb-database'].addEventListener('idb-ready', () => {
+          this.idb = {
+            blogs: this.$['idb-blogs'],
+            settings: this.$['idb-settings'],
+          };
+          this.setupUser();
+        });
         this.addEventListener('pageEvent', this._pageChangeRequested);
       },
       _pageChangeRequested: function(event) {
@@ -144,8 +165,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (page == 'index' && this.$['blog-index'].refresh) {
           this.$['blog-index'].refresh();
         }
+      },
+      setupUser: function(){
+        this.idb.settings.get('user').then((user) => {
+          if (user) {
+            this.user = user;
+          } else {
+            this.user = {
+              key: 'user',
+              uuid: this.generateUUID(),
+              name: null,
+            };
+            this.idb.settings.put(this.user);
+          }
+        });
       }
-
     });
 
   </script>

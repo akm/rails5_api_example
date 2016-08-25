@@ -9,14 +9,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/idb-node/idb-node.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="blog-unit.html">
-
-<script src="../bower_components/node-uuid/uuid.js"></script>
+<link rel="import" href="blog-db-behavior.html">
 
 <dom-module id="blog-edit">
 
@@ -45,12 +43,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <idb-node id="idb"
-              database-name="blog-app"
-              version="2"
-              object-store="blogs"
-              key-path="uuid"></idb-node>
-
     <section>
       <paper-input label="Title" value="{{title}}"></paper-input>
       <paper-textarea label="Content"  value="{{content}}" rows="3"></paper-textarea>
@@ -69,6 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
 
       is: 'blog-edit',
+      behaviors: [BlogDbBehavior],
       properties: {
         subroute: {
           type: Object,
@@ -86,12 +79,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         created_at: Number,
       },
       ready: function() {
-        this.$.idb.addEventListener('idb-ready', () => this.refresh());
         this.addEventListener('subroute-changed', () => this.refresh());
+        this.refresh();
       },
       refresh: function() {
         this.uuid = this.subroute.path.replace(/^\//, '')
-        this.$.idb.get(this.uuid)
+        this.idb.blogs.get(this.uuid)
           .then((blog) => {
             if (blog) {
               this.title = blog.title;
@@ -102,14 +95,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       update: function(e) {
         var blog = {
+          user: this.user,
           uuid: this.uuid,
           title: this.title,
           content: this.content,
           created_at: this.created_at,
         };
-        this.$.idb.delete(this.uuid)
+        this.idb.blogs.delete(this.uuid)
           .then(() => {
-            this.$.idb.put(blog).then(() => {
+            this.idb.blogs.put(blog).then(() => {
               this.fire('pageEvent', {page: 'index'});
               this.title = '';
               this.content = '';
@@ -117,7 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
       },
       delete: function(e) {
-        this.$.idb.delete(this.uuid)
+        this.idb.blogs.delete(this.uuid)
           .then(() => this.fire('pageEvent', {page: 'index'}));
       },
     });

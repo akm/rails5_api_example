@@ -25,6 +25,10 @@
 
 FactoryGirl.define do
   factory :user do
-    
+    email "user1@example.com"
+
+    before(:create) do |sp|
+      sp.password = sp.password_confirmation = "password"
+    end
   end
 end

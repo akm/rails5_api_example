@@ -54,6 +54,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'gitguard'
+  gem 'akm_rails_generators', git: 'git@github.com:akm/akm_rails_generators.git'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

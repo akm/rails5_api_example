@@ -1,0 +1,50 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="blog-db-behavior.html">
+
+<dom-module id="blog-signup">
+
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+    </style>
+
+    <section>
+      <paper-input label="Name" value="{{user.name}}" readonly="true"></paper-input>
+      <paper-input type="password" label="Password" value="{{password}}"></paper-input>
+      <paper-input type="password" label="Password confirmation" value="{{passwordConfirmation}}"></paper-input>
+      <paper-checkbox checked="{{agreed}}">Agree</paper-checkbox>
+      <paper-button raised on-click="execute"><iron-icon icon="cloud-upload"></iron-icon>Sign up</paper-button>
+    </section>
+  </template>
+
+  <script>
+
+    Polymer({
+
+      is: 'blog-signup',
+      behaviors: [BlogDbBehavior],
+      properties: {
+        user: {
+          type: Object,
+        },
+        password: String,
+        passwordConfirmation: String,
+        agreed: Boolean,
+      },
+      ready: function() {
+      },
+      execute: function(e) {
+      },
+    });
+
+  </script>
+
+</dom-module>

@@ -20,16 +20,13 @@ require 'rails_helper'
 
 RSpec.describe V1::UsersController, type: :controller do
 
-  let(:user){ FactoryGirl.create(:user) }
-  before{ devise_user_login(user) }
-
-  let(:user){ FactoryGirl.create(:user) }
+  let(:password){ "password" }
 
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_parameters) {
-    FactoryGirl.attributes_for(:user)
+    FactoryGirl.attributes_for(:user).merge(password: password, password_confirmation: password)
   }
 
   let(:invalid_parameters) {
@@ -42,6 +39,9 @@ RSpec.describe V1::UsersController, type: :controller do
   let(:valid_session) { {} }
 
   describe "GET #index" do
+    let(:user){ FactoryGirl.create(:user) }
+    before{ devise_user_login(user) }
+
     it "assigns all users as @users" do
       get :index, params: {}, session: valid_session
       expect(assigns(:users)).to eq([user])
@@ -49,24 +49,12 @@ RSpec.describe V1::UsersController, type: :controller do
   end
 
   describe "GET #show" do
+    let(:user){ FactoryGirl.create(:user) }
+    before{ devise_user_login(user) }
+
     it "assigns the requested user as @user" do
       user # To create user
       get :show, params: {:id => user.to_param}, session: valid_session
-      expect(assigns(:user)).to eq(user)
-    end
-  end
-
-  describe "GET #new" do
-    it "assigns a new user as @user" do
-      get :new, params: {}, session: valid_session
-      expect(assigns(:user)).to be_a_new(User)
-    end
-  end
-
-  describe "GET #edit" do
-    it "assigns the requested user as @user" do
-      user # To create user
-      get :edit, params: {:id => user.to_param}, session: valid_session
       expect(assigns(:user)).to eq(user)
     end
   end
@@ -87,7 +75,7 @@ RSpec.describe V1::UsersController, type: :controller do
 
       it "redirects to the created user" do
         post :create, params: {:user => valid_parameters}, session: valid_session
-        expect(response).to redirect_to(User.last)
+        expect(response).to have_http_status(:created)
       end
     end
 
@@ -99,12 +87,15 @@ RSpec.describe V1::UsersController, type: :controller do
 
       it "re-renders the 'new' template" do
         post :create, params: {:user => invalid_parameters}, session: valid_session
-        expect(response).to render_template("new")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe "PUT #update" do
+    let(:user){ FactoryGirl.create(:user) }
+    before{ devise_user_login(user) }
+
     context "with valid params" do
       let(:new_email){ valid_parameters[:email].succ }
 
@@ -128,7 +119,7 @@ RSpec.describe V1::UsersController, type: :controller do
       it "redirects to the user" do
         user # To create user
         put :update, params: {:id => user.to_param, :user => valid_parameters}, session: valid_session
-        expect(response).to redirect_to(user)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -142,12 +133,15 @@ RSpec.describe V1::UsersController, type: :controller do
       it "re-renders the 'edit' template" do
         user # To create user
         put :update, params: {:id => user.to_param, :user => invalid_parameters}, session: valid_session
-        expect(response).to render_template("edit")
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
   describe "DELETE #destroy" do
+    let(:user){ FactoryGirl.create(:user) }
+    before{ devise_user_login(user) }
+
     it "destroys the requested user" do
       user # To create user
       expect {
@@ -158,7 +152,7 @@ RSpec.describe V1::UsersController, type: :controller do
     it "redirects to the users list" do
       user # To create user
       delete :destroy, params: {:id => user.to_param}, session: valid_session
-      expect(response).to redirect_to(v1_users_url)
+      expect(response).to have_http_status(:no_content)
     end
   end
 

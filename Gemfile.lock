@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:akm/akm_rails_generators.git
-  revision: 687c55c716e4e35343a789e5ef4c388a41fc3b08
+  revision: b2887dc6052cc5e08a689a2704090556eb5080e6
   specs:
     akm_rails_generators (0.0.1)
 

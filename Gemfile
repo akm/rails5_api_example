@@ -14,10 +14,6 @@ gem 'puma', '~> 3.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'enumerize'
-gem 'pretty_validation', git: 'https://github.com/akm/pretty_validation.git'
-
-
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -26,6 +22,13 @@ gem 'rack-cors'
 
 # https://www.simplify.ba/articles/2016/06/18/creating-rails5-api-only-application-following-jsonapi-specification/
 gem 'active_model_serializers', '~> 0.10.0'
+
+gem 'devise'
+
+gem 'enumerize'
+gem 'pretty_validation', git: 'https://github.com/akm/pretty_validation.git'
+
+gem 'kaminari'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

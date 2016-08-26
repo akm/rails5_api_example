@@ -29,4 +29,9 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  before_validation :assign_access_token
+  def assign_access_token
+    self.access_token = "#{self.id}:#{Devise.friendly_token}"
+  end
 end
